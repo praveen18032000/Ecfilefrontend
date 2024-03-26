@@ -50,7 +50,7 @@ const SignupForm = () => {
       setErrorMessage('');
       navigate("/verify");
     } catch (err) {
-        console.log(err);
+      console.log(err);
       setErrorMessage(err.response.data.message);
       setSuccessMessage('');
     }
