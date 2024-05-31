@@ -734,3 +734,211 @@ function DownloadPdf() {
 }
 
 export default DownloadPdf
+
+import React from 'react'
+import { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable';
+import pdfLogoo from "../pexels-photo-1580271.jpeg"
+function DownloadPdf() {
+    const entireStatementData = {
+        address: "15 Dunrobin Acres",
+        company_name: "ABC Stage",
+        contact_name: "abc",
+        is_paid:true,
+        data : [
+            {
+              tile1: "01-Jan-2024",
+              tile2: " 06-Jan-2024",
+              tile3: "J$ 100.00",
+              tile4: "J$ 4.00",
+              tile5: "",
+              tile6: "J$ 0.00",
+              tile7: "7",
+              tile8: "J$ 100.00",
+              tile9: "Invoice7",
+              tile10: "01-Jan-2024",
+              tile11: "Paid"
+            },
+            {
+              tile1: "",
+              tile2: "",
+              tile3: "",
+              tile4: "",
+              tile5: "",
+              tile6: "( J$ 212.80) ",
+              tile7: "",
+              tile8: "",
+              tile9: "PAYMENT",
+              tile10: "",
+              tile11: "21-May-2024"
+            },
+            {
+              tile1: "01-Jan-2024",
+              tile2: " 06-Jan-2024",
+              tile3: "J$ 100.00",
+              tile4: "J$ 4.00",
+              tile5: "",
+              tile6: "J$ 0.00",
+              tile7: "7",
+              tile8: "J$ 100.00",
+              tile9: "Invoice7",
+              tile10: "01-Jan-2024",
+              tile11: "Paid"
+            },
+             
+        ],
+        total_payment_pending: "J$ 79,370.22"
+    };
+     const getCurrentTime = () =>{
+        const currentTime = new Date();
+        const jamaicanOffset = -5 * 60 * 60 * 1000;
+        const jamaicanTime = new Date(currentTime.getTime() + jamaicanOffset);
+        const formattedHours = (jamaicanTime.getUTCHours() < 10 ? '0' : '') + jamaicanTime.getUTCHours();
+        const formattedMinutes = (jamaicanTime.getUTCMinutes() < 10 ? '0' : '') + jamaicanTime.getUTCMinutes();
+        const formattedTime = formattedHours + ":" + formattedMinutes;
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const formattedDate = jamaicanTime.getUTCDate() + "-" + months[jamaicanTime.getUTCMonth()] + "-" + jamaicanTime.getUTCFullYear();
+        const formattedDateTime = `${formattedTime} (EST) ${formattedDate}`;
+        return formattedDateTime;
+    }
+    const istile5Available= []
+    const handleDownloadPdf = () => {
+      const pdf = new jsPDF('landscape', 'mm', 'a1');
+      const pdfContainer = document.createElement('div');
+      document.body.appendChild(pdfContainer);
+  
+      // const myFont = configJSON.fonts;
+  
+      // pdf.addFileToVFS("MyFont.ttf", myFont);
+      // pdf.addFont("MyFont.ttf", "MyFont", "normal");
+  
+  
+      pdf.setFont("MyFont");
+      pdf.addImage(pdfLogoo, 'png', 30, 10, 50, 50);
+      pdf.setFont('MyFont', 'bold');
+      pdf.setFontSize(25)
+      pdf.text(`Carbyne Capital`, 27, 70);
+      pdf.text(`Investments Limited`, 23, 82)
+
+      pdf.setFont('MyFont', 'normal');
+      pdf.text('Email : ', 152, 22);
+      pdf.setFont('MyFont', 'bold');
+      pdf.text(' info@ccija.com', 180, 22);
+      pdf.setFont('MyFont', 'normal')
+      pdf.text('Phone : ', 152, 35)
+      pdf.setFont('MyFont', 'bold')
+      pdf.text('876-631-7661', 182, 35)
+      pdf.setFont('MyFont', 'normal')
+      pdf.text('Website : ', 152, 48);
+      pdf.setFont('MyFont', 'bold')
+      pdf.text('www.ccija.com', 190, 48);
+      pdf.setFont('MyFont', 'normal')
+      pdf.text('Address : ', 152, 61)
+      pdf.setFont('MyFont', 'bold')
+      pdf.text('8 Lady Musgrave Rd Kingston, Jamaica,', 190, 61)
+      pdf.setFont('MyFont', 'normal')
+      pdf.text('Contact Name : ', 359, 22)
+      pdf.setFont('MyFont', 'bold')
+      pdf.text(`${entireStatementData?.contact_name ?? "-"}`, 415, 22)
+      pdf.setFont('MyFont', 'normal')
+      pdf.text('Company Name: ', 359, 35)
+      pdf.setFont('MyFont', 'bold')
+      pdf.text(`${entireStatementData?.company_name ?? "-"}`, 420, 35)
+      pdf.setFont('MyFont', 'normal')
+      pdf.text('Address: ', 359, 48)
+      pdf.setFont('MyFont', 'bold')
+      pdf.text(`${entireStatementData.address ?? "-"}`, 390, 48)
+      pdf.setFont('MyFont', 'normal')
+      pdf.text('Total Payment Pending : ', 600, 25)
+      pdf.setFont('MyFont', 'bold')
+      if (entireStatementData.is_paid) {
+        pdf.setTextColor(0, 255, 0)
+      }
+      else {
+        pdf.setTextColor(0, 0, 0)
+      }
+      pdf.setFontSize(30)
+      pdf.text(`${entireStatementData.is_paid ? "( " : ""} ${entireStatementData.total_payment_pending ?? "0"}${entireStatementData.is_paid ? " )" : ""}`, 685, 25)
+      pdf.setFont('MyFont', 'normal')
+      pdf.setFontSize(25)
+      pdf.setTextColor(0, 0, 0)
+     
+      pdf.text("Aa at : ", 615, 40)
+      pdf.setFont('MyFont', 'bold')
+      pdf.setFontSize(25)
+      pdf.setTextColor(0, 0, 0)
+      pdf.text(`${getCurrentTime()}`, 642, 40)
+  
+    
+      const bodyData = entireStatementData.data.map((item) => [
+        item?.tile1,
+        item?.tile2,
+        item?.tile3,
+        item?.tile4,
+        istile5Available.length > 0 ? item?.tile5 : undefined,
+        item?.tile6,
+        item?.tile7,
+        item?.tile8,
+        item?.tile9,
+        item?.tile10,
+        item?.tile11,
+      ].filter(value => value !== undefined));
+  
+      let tableColumns = [
+        'Disbursement Date',
+        'Due Date',
+        'Amount Disbursed',
+        'Factor Fee',
+        'Delinquent Fee',
+        'Amount to be Settled to CCI',
+        'Invoice/PO #',
+        'Invoice Amount',
+        'Vendor/Buyer',
+        'Invoice/PO Date',
+        'CCI Settlement Date'
+      ];
+  
+      let dataHead = tableColumns.filter((column, index) => {
+        if (column === 'Delinquent Fee') {
+          return istile5Available.length > 0;
+        }
+        return true;
+      });
+  
+      autoTable(pdf, {
+        startY: 90,
+        head: [dataHead],
+        theme: "grid",
+        body: bodyData,
+        headStyles: {
+          fontSize: 25,
+          fillColor: [246, 234, 204],
+          textColor: [0, 0, 0],
+          cellPadding: 10,
+          font: "MyFont"
+        },
+        bodyStyles: {
+          fontSize: 20,
+          cellPadding: 5,
+          font: "MyFont"
+        },
+        didDrawPage: function (data) {
+          const pageNumber = data.pageNumber;
+          pdf.setFontSize(15);
+          pdf.text(`Page ${pageNumber}`, data.settings.margin.left, pdf.internal.pageSize.height - 10);
+  
+        }
+  
+      });
+      pdf.save('Client_statement.pdf');
+      document.body.removeChild(pdfContainer);
+    };
+  
+  return (
+    <>
+    <div onClick={handleDownloadPdf}>DownloadPdf</div>
+    </>
+  )
+}
+
+export default DownloadPdf
